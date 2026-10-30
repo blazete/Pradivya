@@ -81,6 +81,18 @@
 @media(min-width:761px){.market-stat strong{font-size:clamp(58px,6.5vw,104px)}}
 .hero-copy .hero-title-first{position:relative;display:block;width:fit-content;max-width:100%;margin:0 auto;background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;text-align:inherit;pointer-events:auto;cursor:pointer}.hero-text-reserve{visibility:hidden}.hero-scramble-layer{position:absolute;inset:0;display:block}.hero-shift-line{position:relative}.hero-shift-text:after{display:none}.hero-copy .hero-title-first:focus-visible{outline:1px solid #8ca995;outline-offset:7px;border-radius:3px}
 @media(max-width:760px){.hero-copy .hero-title-first{margin-left:0}}
-/* Pointer-driven light reveals the sensing statement without moving its layout. */
-.hero-sense-line{position:relative;display:inline-block;isolation:isolate;--sense-x:50%}.hero-sense-light{position:absolute;inset:0;pointer-events:none;opacity:0;color:transparent;background:radial-gradient(ellipse 90px 28px at var(--sense-x) 50%,#00553e 0%,#237c5b 40%,transparent 85%);background-clip:text;-webkit-background-clip:text;font-weight:inherit}.hero-sense-light::before{content:'';position:absolute;inset:-13px -18px;z-index:-1;background:radial-gradient(ellipse 95px 26px at var(--sense-x) 50%,#67c39430,transparent 85%);filter:blur(4px);pointer-events:none}
-@media(prefers-reduced-motion:reduce){.hero-copy:has(.hero-title-first:hover) .hero-sense-light,.hero-copy:has(.hero-title-first:focus) .hero-sense-light{opacity:1}}
+/* Timed hero entrance; layout stays reserved while text layers animate. */
+.physical-page .hero-copy>.hero-eyebrow{display:block!important;color:#315d48!important;margin:0 auto 12px!important;letter-spacing:.08em}
+.hero-copy h1 .hero-line-mask{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
+.hero-line-inner{display:block}.sense-hear-letter{display:inline-block}
+.physical-page .hero-copy .hero-support{margin:16px auto 0}
+.rerun-actions .pill{position:relative;overflow:hidden;font-size:14px}
+.pill-label{display:block;white-space:pre;font:inherit}
+.sf-presence-block .sf-presence-context{display:flex;align-items:center;gap:3px;width:max-content;max-width:none;white-space:nowrap;font-size:10px;margin:0 0 20px}
+@media(max-width:760px){.hero-eyebrow{text-align:left!important}.physical-page .hero-copy .hero-support{font-size:16px}.hero-copy h1 .hero-line-mask{padding-bottom:.16em;margin-bottom:-.16em}.sf-presence-block .sf-presence-context{font-size:9px;max-width:calc(100vw - 40px);white-space:normal;flex-wrap:wrap}}
+.sense-see, .sense-feel, .sense-hear-letter { display: inline-block; }
+.hero-line-mask { display: block; overflow: hidden; padding-bottom: .08em; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
