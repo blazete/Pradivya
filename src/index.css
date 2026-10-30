@@ -1,0 +1,262 @@
+@font-face{font-family:Inter;src:url('/fonts/Inter.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'DM Mono';src:url('/fonts/DMMono.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Hedvig Letters Serif';src:url('/fonts/HedvigLettersSerif.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@layer base {
+  body {
+    @apply text-gray-900 dark:text-white font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-pradivya-primary hover:bg-opacity-90 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-pradivya-accent hover:bg-opacity-90 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-outline {
+    @apply border-2 border-pradivya-primary text-pradivya-primary hover:bg-pradivya-primary hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300;
+  }
+
+  /* Enhanced header styles */
+  .header-nav-item {
+    @apply relative overflow-hidden;
+  }
+
+  .header-nav-item::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-pradivya-primary/0 via-pradivya-primary/5 to-pradivya-primary/0 transform -translate-x-full transition-transform duration-500;
+  }
+
+  .header-nav-item:hover::before {
+    @apply translate-x-full;
+  }
+
+  .mobile-menu-enter {
+    @apply transform -translate-y-2 opacity-0;
+  }
+
+  .mobile-menu-enter-active {
+    @apply transform translate-y-0 opacity-100 transition-all duration-300;
+  }
+
+  .mobile-menu-exit {
+    @apply transform translate-y-0 opacity-100;
+  }
+
+  .mobile-menu-exit-active {
+    @apply transform -translate-y-2 opacity-0 transition-all duration-300;
+  }
+}
+
+/* Video Modal Animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.3s ease-out forwards;
+}
+
+/* Enhanced Hero Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-20px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-10px) translateX(5px);
+  }
+}
+
+@keyframes grid-move {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(40px, 40px);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 179, 164, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 179, 164, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Particle float animation */
+.float-particle {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Enhanced blob animation */
+@keyframes blob-enhanced {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(30px, -50px) scale(1.1) rotate(90deg);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9) rotate(180deg);
+  }
+  75% {
+    transform: translate(50px, 10px) scale(1.05) rotate(270deg);
+  }
+}
+
+.animate-blob-enhanced {
+  animation: blob-enhanced 15s infinite;
+}
+
+/* Parallax effects */
+.parallax-slow {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Hover effects */
+.hero-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* Text reveal animation */
+@keyframes text-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) rotateX(-90deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+.animate-text-reveal {
+  animation: text-reveal 1s ease-out forwards;
+}
+
+/* Button ripple effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Google Maps Styling */
+.gm-style-iw-c {
+  border-radius: 8px !important;
+}
+
+.gm-style-iw-d {
+  overflow: visible !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
