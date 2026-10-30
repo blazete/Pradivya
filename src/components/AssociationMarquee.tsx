@@ -1,5 +1,8 @@
 import './association-marquee.css';
 const associations=[
+  {name:'Microsoft',image:'/associations/microsoft.svg',relationship:'INDUSTRY NETWORK'},
+  {name:'Google',image:'/associations/google.svg',relationship:'INDUSTRY NETWORK'},
+  {name:'ZF',image:'/associations/zf.svg',relationship:'INNOVATION NETWORK'},
   {name:'IIT Kanpur · SIIC',image:'/associations/IIT.png',relationship:'INCUBATION'},
   {name:'Indian Railways',image:'/associations/rail.png',relationship:'RAILWAY PROJECTS'},
   {name:'IIM Lucknow Incubator',image:'/associations/IIM.png',relationship:'INCUBATION & FUNDING'},

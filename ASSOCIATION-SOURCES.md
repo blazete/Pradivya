@@ -13,3 +13,5 @@ Locally bundled source images were downloaded from the original site's image URL
 - SIDBI and Pentland: funding, as listed in archive.
 
 C3i and DSCI source images timed out and are not included. The ZF factory photograph and Nasdaq event photograph in the ZIP were not used as logos. Reconfirm relationship status and logo-use approval before public launch.
+
+30 October update: Microsoft, Google and ZF added to the network marquee at the user's explicit request. Assets: Wikimedia Microsoft_logo.svg; Wikimedia Google_2015_logo.svg; Wikimedia ZF_Official_Logo.svg. The display does not specify a customer or endorsement relationship.

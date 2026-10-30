@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import RobotHero from '../components/RobotHero';
+import HeroMessaging, { HeroPresence } from '../components/HeroMessaging';
 import DetectionScroll from '../components/DetectionScroll';
 import Builders from '../components/Builders';
 import MarketOpportunity from '../components/MarketOpportunity';
@@ -91,11 +92,11 @@ export default function Home() {
     <header className={`ph-nav ${menuOpen ? 'menu-open' : ''}`}><a href="#top" aria-label="Pradivya home"><img src="/img/pradivya-logo-small.webp" alt="Pradivya" width="88" height="55" /></a><nav id="landing-navigation" aria-label="Main navigation" onClick={() => setMenuOpen(false)}><span ref={navIndicator} className="ph-nav-indicator" aria-hidden="true"/><a href="#platform">Platform</a><a href="#open-source">Open source</a><a href="#industries">Industries</a><a href="#hub">The Hub</a></nav><a className="pill dark-pill" href="/contact#request">Book a demo <ArrowUpRight size={15}/></a><button ref={menuButton} className="mobile-menu" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="landing-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X/> : <Menu/>}</button></header>
 
     <section className="hero" id="top">
-      <a className="sf-presence-card" href="#hub"><span className="sf-presence-kicker"><i/> OUR U.S. PRESENCE</span><strong>San Francisco <ArrowUpRight size={18}/></strong><span>c/o Third Coast Foundry</span><span className="sf-presence-address">625 2nd St · California</span></a>
+      <HeroPresence />
       <div className="hero-art" role="img" aria-label="Industrial robot inspecting a railway component" />
       <RobotHero />
       <div className="hero-shade" />
-      <div className="hero-copy"><span className="eyebrow light">PHYSICAL AI · INDUSTRIAL INSPECTION</span><h1>See, hear and<br/>feel every <em>defect.</em></h1><p>Multisensory AI for industrial inspection.<br/>Built for the real world.</p><div className="rerun-actions"><a className="pill bright-pill" href="/contact#request">Book a demo</a><a className="pill rerun-secondary" href="#platform">Explore the platform</a></div></div>
+      <HeroMessaging />
       
       <div className="hero-bottom"><span>01 / 08 — THE INSPECTION SHIFT</span><a href="#thesis"><ArrowDown size={16}/> SCROLL TO EXPLORE</a><span>USA · GLOBAL</span></div>
     </section>

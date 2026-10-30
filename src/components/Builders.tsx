@@ -12,6 +12,9 @@ const people = [
 export default function Builders() {
   const [selected, setSelected] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [inView, setInView] = useState(false);
+  const root = useRef<HTMLElement>(null);
+  useEffect(() => { const observer = new IntersectionObserver(([entry]) => { setInView(entry.isIntersecting); if (entry.isIntersecting) setSelected(0); }, {threshold:.25}); if(root.current) observer.observe(root.current); return () => observer.disconnect(); }, []);
   const [engaged, setEngaged] = useState(false);
   const [reduced, setReduced] = useState(false);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -22,12 +25,12 @@ export default function Builders() {
     return () => preference.removeEventListener('change', update);
   }, []);
   useEffect(() => {
-    if (paused || engaged || reduced) return;
-    const timer = window.setInterval(() => setSelected(index => (index + 1) % people.length), 6500);
+    if (!inView || paused || engaged || reduced) return;
+    const timer = window.setInterval(() => setSelected(index => (index + 1) % people.length), 2000);
     return () => clearInterval(timer);
-  }, [paused, engaged, reduced, selected]);
+  }, [inView, paused, engaged, reduced, selected]);
   const choose = (index: number) => setSelected((index + people.length) % people.length);
-  return <section className="builders" id="team" aria-labelledby="builders-title">
+  return <section ref={root} className="builders" id="team" aria-labelledby="builders-title">
     <header className="builders-heading"><span>THE PEOPLE BEHIND PRADIVYA</span><h2 id="builders-title">Built by builders.</h2><p>Founders and advisors with experience across<br className="builders-break"/> technology, industry and investment.</p></header>
     <div className="builders-carousel" onMouseEnter={() => setEngaged(true)} onMouseLeave={() => setEngaged(false)} onFocusCapture={() => setEngaged(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setEngaged(false); }}>
       <div className="builders-tabs" role="tablist" aria-label="Founders and advisors">{people.map((person,index) => <button ref={el => { tabs.current[index] = el; }} id={`builder-tab-${index}`} key={person.name} role="tab" aria-selected={selected === index} aria-controls={`builder-panel-${index}`} tabIndex={selected === index ? 0 : -1} onClick={() => choose(index)} onKeyDown={e => { let next: number | undefined; if (e.key === 'ArrowRight') next = (index+1)%people.length; if (e.key === 'ArrowLeft') next = (index+people.length-1)%people.length; if(e.key==='Home') next=0; if(e.key==='End') next=people.length-1; if(next!==undefined){ e.preventDefault(); choose(next); tabs.current[next]?.focus(); } }}><span>{person.name}</span><small>{person.category}</small></button>)}</div>

@@ -101,3 +101,17 @@ test('mobile dark preference remains accessible', async ({page})=>{
  await page.emulateMedia({colorScheme:'dark',reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});
  for(const route of ['/','/contact']){await page.goto(route);const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);}
 });
+
+test('platform messaging, market forecasts and advisor-first timing', async ({page})=>{
+ await page.setViewportSize({width:1414,height:827});await page.goto('/');
+ await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName(/Physical AI is the next platform shift/);
+ await expect(page.locator('.sf-presence-context')).toContainText('UChicago India Deep Tech Accelerator');
+ for(const name of ['Microsoft','Google','ZF']) await expect(page.locator('.association-group').first().getByRole('img',{name:new RegExp(name+' —')})).toHaveCount(1);
+ await page.locator('#opportunity').scrollIntoViewIfNeeded();
+ await expect(page.locator('.market-value').nth(0)).toHaveText('157');
+ await expect(page.locator('.market-value').nth(1)).toHaveText('121.5');
+ await expect(page.locator('.market-value').nth(2)).toHaveText('15.2');
+ await page.locator('#team').scrollIntoViewIfNeeded();
+ await expect(page.getByRole('tab',{name:/Sebastian Grimm/})).toHaveAttribute('aria-selected','true');
+ await expect(page.getByRole('tab',{name:/R. \(Shyam\)/})).toHaveAttribute('aria-selected','true',{timeout:4000});
+});
