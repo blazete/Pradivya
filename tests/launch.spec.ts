@@ -115,3 +115,16 @@ test('platform messaging, market forecasts and advisor-first timing', async ({pa
  await expect(page.getByRole('tab',{name:/Sebastian Grimm/})).toHaveAttribute('aria-selected','true');
  await expect(page.getByRole('tab',{name:/R. \(Shyam\)/})).toHaveAttribute('aria-selected','true',{timeout:4000});
 });
+
+test('headline spotlight follows the pointer and supports keyboard focus', async ({page})=>{
+ await page.setViewportSize({width:1414,height:827});await page.goto('/');
+ const trigger=page.getByRole('button',{name:'Replay headline animation'});
+ const light=page.locator('.hero-sense-light');
+ await trigger.hover({position:{x:20,y:20}});
+ await expect(light).toHaveCSS('opacity','1');
+ await expect.poll(()=>page.locator('.hero-sense-line').evaluate(el=>parseFloat(getComputedStyle(el).getPropertyValue('--sense-x')))).toBeLessThan(20);
+ await page.mouse.move(10,80);await expect(light).toHaveCSS('opacity','0');
+ await trigger.focus();await expect(light).toHaveCSS('opacity','1');
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await expect(light).toHaveCSS('opacity','1');
+});
