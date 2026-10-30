@@ -13,6 +13,14 @@ export default function AnimatedFooter() {
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
     const setup = () => { dispose?.(); dispose = mountAsciiFooter(root.current!,canvas.current!); };
     setup(); preference.addEventListener('change',setup);
+    let alive = true;
+    const footer = root.current;
+    const fontObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      fontObserver.disconnect();
+      document.fonts.load('24px "Hedvig Letters Serif"').then(() => { if (alive) footer.classList.add('font-ready'); }).catch(() => {});
+    }, { rootMargin: '300px' });
+    fontObserver.observe(footer);
     const media = gsap.matchMedia();
     media.add('(prefers-reduced-motion: no-preference)', () => {
       const ctx = gsap.context(() => {
@@ -20,7 +28,7 @@ export default function AnimatedFooter() {
       },root);
       return () => ctx.revert();
     });
-    return () => { dispose?.(); preference.removeEventListener('change',setup); media.revert(); };
+    return () => { alive = false; fontObserver.disconnect(); dispose?.(); preference.removeEventListener('change',setup); media.revert(); };
   },[]);
   return <footer ref={root} className="ascii-footer" id="contact" aria-label="Pradivya contact and navigation">
     <canvas ref={canvas} className="ascii-footer-canvas" aria-hidden="true"/>

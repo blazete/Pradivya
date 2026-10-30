@@ -5,3 +5,5 @@
 @media(max-width:760px){.ascii-footer-brand{top:68px;left:7%;max-width:86%}.ascii-footer-brand>span{font-size:clamp(44px,13vw,70px)}.ascii-footer-brand>small{font-size:8px;margin-top:12px}}
 .ascii-footer-brand{top:35px}.ascii-footer-brand:hover{opacity:1}.ascii-footer-brand>.asc{width:360px;max-width:100%}.ascii-footer-brand>small{margin-top:8px}.ascii-footer-brand{max-width:calc(100% - 80px)}
 @media(max-width:760px){.ascii-footer-brand{top:24px;max-width:86%;width:245px}.ascii-footer-content{padding-top:245px}.ascii-footer-brand>small{margin-top:0}}
+
+.ascii-footer-invitation p{font-family:Georgia,serif}.ascii-footer.font-ready .ascii-footer-invitation p{font-family:'Hedvig Letters Serif',Georgia,serif}
