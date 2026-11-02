@@ -84,17 +84,26 @@ test('secondary routes render and GitHub Pages fallback restores a direct link',
   expect(errors).toEqual([]);expect(broken).toEqual([]);
 });
 
- test('touch preview and optional 3D remain usable', async ({browser})=>{
-  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
-  const page=await context.newPage();await page.goto('http://127.0.0.1:5175/');
-  await expect(page.locator('.robot-canvas img')).toBeVisible();
-  await expect(page.locator('.robot-canvas canvas')).toHaveCount(0);
-  await page.getByRole('button',{name:'Enable 3D robot'}).tap();
-  await expect(page.locator('.robot-canvas canvas')).toBeVisible();
-  await page.getByRole('button',{name:'Pause 3D · show still'}).tap();
-  await expect(page.locator('.robot-canvas canvas')).toHaveCount(0);
-  await expect(page.locator('.robot-canvas img')).toBeVisible();
-  await context.close();
+test('sequence follows scroll, brands faults, and switches responsive assets', async ({page})=>{
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('/');
+  const hero=page.locator('.sequence-hero');await expect(hero).toHaveClass(/is-ready/);
+  const geometry=await page.locator('.sequence-stage').evaluate(el=>({top:el.getBoundingClientRect().top,width:el.clientWidth,height:el.clientHeight,viewportWidth:innerWidth,viewportHeight:innerHeight}));
+  expect(geometry.top).toBe(0);expect(geometry.width).toBe(geometry.viewportWidth);expect(geometry.height).toBe(geometry.viewportHeight);
+  await expect(page.locator('.ph-nav')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
+  for(const frame of [70,160,240,299,128,0]){
+   await page.evaluate(frame=>{const el=document.querySelector<HTMLElement>('.sequence-hero')!;window.scrollTo({top:el.offsetTop+(el.offsetHeight-innerHeight)*frame/299,behavior:'instant'});},frame);
+   await expect(hero).toHaveAttribute('data-frame',String(frame));
+   if([70,160,240].includes(frame)){
+    await expect(page.locator('.sequence-fault')).toHaveClass(/is-active/);
+    await expect(page.locator('.sequence-fault img')).toBeVisible();
+    const box=await page.locator('.sequence-fault').boundingBox();expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(width);
+   }
+  }
+  await expect(page.locator('.hud')).toHaveCount(0);
+ }
+ expect(errors).toEqual([]);
 });
 
 test('mobile dark preference remains accessible', async ({page})=>{
@@ -104,8 +113,8 @@ test('mobile dark preference remains accessible', async ({page})=>{
 
 test('platform messaging, market forecasts and advisor-first timing', async ({page})=>{
  await page.setViewportSize({width:1414,height:827});await page.goto('/');
- await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName(/Physical AI is the next platform shift/);
- await expect(page.locator('.sf-presence-context')).toContainText('UChicago India Deep Tech Accelerator');
+ await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName(/Intelligence for a world in motion/);
+ await expect(page.locator('.association-group').first().getByRole('img',{name:/University of Chicago/})).toHaveCount(1);
  for(const name of ['Microsoft','Google','ZF']) await expect(page.locator('.association-group').first().getByRole('img',{name:new RegExp(name+' —')})).toHaveCount(1);
  await page.locator('#opportunity').scrollIntoViewIfNeeded();
  await expect(page.locator('.market-value').nth(0)).toHaveText('157');
@@ -116,15 +125,76 @@ test('platform messaging, market forecasts and advisor-first timing', async ({pa
  await expect(page.getByRole('tab',{name:/R. \(Shyam\)/})).toHaveAttribute('aria-selected','true',{timeout:4000});
 });
 
-test('headline spotlight follows the pointer and supports keyboard focus', async ({page})=>{
- await page.setViewportSize({width:1414,height:827});await page.goto('/');
- const trigger=page.getByRole('button',{name:'Replay headline animation'});
- const light=page.locator('.hero-sense-light');
- await trigger.hover({position:{x:20,y:20}});
- await expect(light).toHaveCSS('opacity','1');
- await expect.poll(()=>page.locator('.hero-sense-line').evaluate(el=>parseFloat(getComputedStyle(el).getPropertyValue('--sense-x')))).toBeLessThan(20);
- await page.mouse.move(10,80);await expect(light).toHaveCSS('opacity','0');
- await trigger.focus();await expect(light).toHaveCSS('opacity','1');
- await page.emulateMedia({reducedMotion:'reduce'});
- await expect(light).toHaveCSS('opacity','1');
+test('reduced motion stays on a still; missing frames retain poster and navigation', async ({page})=>{
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
+ await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+ await expect(page.locator('.sequence-hero')).toHaveClass(/is-reduced/);
+ await page.locator('#platform').scrollIntoViewIfNeeded();await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','0');
+ await page.route('**/web/frames/**',route=>route.fulfill({status:503,body:'unavailable'}));
+ await page.goto('/');await expect(page.locator('.sequence-error')).toBeVisible();
+ await expect(page.locator('.sequence-poster img')).toBeVisible();await expect(page.getByRole('heading',{level:1})).toBeVisible();
+});
+
+test('centered chapter typography and ASCII reveal start in view', async ({page})=>{
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+ await expect(page.locator('.sequence-chapter').first()).toHaveCSS('text-align','center');
+ await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName('Intelligence for a world in motion.');
+ await page.evaluate(()=>{(window as Window & {asciiEvents?:string[]}).asciiEvents=[];document.addEventListener('asciireveal',event=>{if((event as CustomEvent).detail.active)(window as Window & {asciiEvents:string[]}).asciiEvents.push((event.target as HTMLElement).className);});});
+ await page.waitForTimeout(200);
+ expect(await page.evaluate(()=>(window as Window & {asciiEvents:string[]}).asciiEvents)).toEqual([]);
+ await page.locator('.section-heading').scrollIntoViewIfNeeded();
+ await expect.poll(()=>page.evaluate(()=>(window as Window & {asciiEvents:string[]}).asciiEvents.some(name=>name.includes('section-heading')))).toBe(true);
+});
+
+test('ASCII loader keeps poster and navigation visible, then clears on readiness', async ({page})=>{
+ let release!:()=>void;
+ const gate=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/web/frames/desktop/0000.webp',async route=>{await gate;await route.continue();});
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await expect(page.getByRole('status',{name:'Preparing inspection animation'})).toBeVisible();
+ await expect(page.locator('.sequence-loader [data-ascii-skeleton]')).toHaveCount(1);
+ await expect(page.locator('.sequence-poster img')).toBeVisible();
+ await expect(page.getByRole('navigation',{name:'Main navigation'})).toBeVisible();
+ release();await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+ await expect(page.locator('.sequence-loader')).toBeHidden();
+});
+
+
+test('clean hero, glass fault card and white scroll exit', async ({page})=>{
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ const hero=page.locator('.sequence-hero');await expect(hero).toHaveClass(/is-ready/);
+ await expect(page.getByRole('link',{name:'Explore the platform'})).toHaveCount(0);
+ for(const label of ['01 / ROAD','02 / RAIL','03 / AIR'])await expect(page.getByText(label,{exact:true})).toHaveCount(0);
+ for(const frame of [70,276,288,299,276]){
+  await page.evaluate(frame=>{const el=document.querySelector<HTMLElement>('.sequence-hero')!;window.scrollTo({top:el.offsetTop+(el.offsetHeight-innerHeight)*frame/299,behavior:'instant'});},frame);
+  await expect(hero).toHaveAttribute('data-frame',String(frame));
+  const exit=await hero.evaluate(el=>Number(el.style.getPropertyValue('--exit-progress')));
+  if(frame===70){await expect(page.locator('.sequence-fault-surface')).toHaveCSS('backdrop-filter',/blur/);await expect(page.locator('.sequence-leader line')).toHaveCSS('stroke-dashoffset','0px');}
+  if(frame===276)expect(exit).toBe(0);
+  if(frame===288){expect(exit).toBeGreaterThan(0);expect(exit).toBeLessThan(1);}
+  if(frame===299){expect(exit).toBe(1);const cta=page.getByRole('link',{name:'Meet Pradivya'});await expect(cta).toBeVisible();expect((await cta.boundingBox())!.height).toBeGreaterThanOrEqual(52);}
+ }
+});
+
+
+test('opening ASCII reveal runs after readiness and only once per visit', async ({page})=>{
+ let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/web/frames/desktop/0000.webp',async route=>{await gate;await route.continue();});
+ await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await expect(page.getByRole('status',{name:'Preparing inspection animation'})).toBeVisible();
+ const heading=page.locator('.sequence-opening-reveal');
+ await expect(heading).not.toHaveClass(/is-decoding/);
+ release();await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+ await expect(heading).toHaveClass(/is-decoding/);
+ await expect.poll(()=>page.locator('.opening-line').first().textContent()).toMatch(/[01<>]/);
+ await expect(heading).toHaveAccessibleName('Intelligence for a world in motion.');
+ await expect(heading).toHaveClass(/decode-complete/);
+ await expect(page.locator('.opening-line').first()).toHaveText('Intelligence for');
+ await expect(page.locator('.opening-line').nth(1)).toHaveText('a world in motion.');
+ await page.evaluate(()=>{const el=document.querySelector<HTMLElement>('.sequence-hero')!;scrollTo(0,(el.offsetHeight-innerHeight)*100/299);});
+ await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','100');
+ await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','0');
+ await expect(heading).toHaveClass(/decode-complete/);
+ await expect(page.locator('.opening-line').first()).toHaveText('Intelligence for');
 });

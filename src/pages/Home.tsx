@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import RobotHero from '../components/RobotHero';
-import HeroMessaging, { HeroPresence } from '../components/HeroMessaging';
-import DetectionScroll from '../components/DetectionScroll';
+import SequenceHero from '../components/SequenceHero';
+import ScrollAsciiReveal from '../components/ScrollAsciiReveal';
 import Builders from '../components/Builders';
 import MarketOpportunity from '../components/MarketOpportunity';
 import AnimatedFooter from '../components/AnimatedFooter';
@@ -91,24 +90,14 @@ export default function Home() {
   return <div ref={root} className="physical-page">
     <header className={`ph-nav ${menuOpen ? 'menu-open' : ''}`}><a href="#top" aria-label="Pradivya home"><img src="/img/pradivya-logo-small.webp" alt="Pradivya" width="88" height="55" /></a><nav id="landing-navigation" aria-label="Main navigation" onClick={() => setMenuOpen(false)}><span ref={navIndicator} className="ph-nav-indicator" aria-hidden="true"/><a href="#platform">Platform</a><a href="#open-source">Open source</a><a href="#industries">Industries</a><a href="#hub">The Hub</a></nav><a className="pill dark-pill" href="/contact#request">Book a demo <ArrowUpRight size={15}/></a><button ref={menuButton} className="mobile-menu" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="landing-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X/> : <Menu/>}</button></header>
 
-    <section className="hero" id="top">
-      <HeroPresence />
-      <div className="hero-art" role="img" aria-label="Industrial robot inspecting a railway component" />
-      <RobotHero />
-      <div className="hero-shade" />
-      <HeroMessaging />
-      
-      <div className="hero-bottom"><span>01 / 08 — THE INSPECTION SHIFT</span><a href="#thesis"><ArrowDown size={16}/> SCROLL TO EXPLORE</a><span>USA · GLOBAL</span></div>
-    </section>
-
-    <DetectionScroll />
+    <SequenceHero />
     <AssociationMarquee />
 
     <SystemSection />
 
-    <section className="products" id="products"><div className="section-heading" data-reveal><span className="eyebrow">THE PRODUCT STACK</span><h2>Three products.<br/><em>One system.</em></h2><p>From inspection workflows to open building blocks and edge intelligence.</p></div><div className="product-list">{products.map((p) => <article className="product-card" key={p.n} data-reveal><div className="product-copy"><span className="eyebrow">{p.n} / {p.tag}</span><h3>{p.title}</h3><p>{p.copy}</p><a href="#contact" className="text-link">Explore <ArrowUpRight size={15}/></a></div><div className="product-visual"><img className="product-image" loading="lazy" decoding="async" src={p.image} alt=""/><span className="image-label">PRADIVYA · PHYSICAL AI</span></div></article>)}</div></section>
+    <section className="products" id="products"><ScrollAsciiReveal className="section-heading"><span className="eyebrow">THE PRODUCT STACK</span><h2>Three products.<br/><em>One system.</em></h2><p>From inspection workflows to open building blocks and edge intelligence.</p></ScrollAsciiReveal><div className="product-list">{products.map((p) => <article className="product-card" key={p.n} data-reveal><div className="product-copy"><span className="eyebrow">{p.n} / {p.tag}</span><h3>{p.title}</h3><p>{p.copy}</p><a href="#contact" className="text-link">Explore <ArrowUpRight size={15}/></a></div><div className="product-visual"><img className="product-image" loading="lazy" decoding="async" src={p.image} alt=""/><span className="image-label">PRADIVYA · PHYSICAL AI</span></div></article>)}</div></section>
 
-    <section className="open-source" id="open-source"><div className="open-copy" data-reveal><span className="eyebrow light">OPEN SOURCE · IMAGINATION</span><h2>Built in<br/>the <em>open.</em></h2><p>Start with open building blocks. Adapt multisensory inspection to the problems you know best.</p><a className="pill bright-pill" href="#contact">Explore Imagination <ArrowUpRight size={15}/></a></div><div className="open-art" data-reveal><img src="/img/toolkit2.webp" alt="Illustrative inspection toolkit graphic" loading="lazy" decoding="async"/><div className="code-stamp">OPEN<br/>BY DESIGN</div></div></section>
+    <section className="open-source" id="open-source"><ScrollAsciiReveal className="open-copy"><span className="eyebrow light">OPEN SOURCE · IMAGINATION</span><h2>Built in<br/>the <em>open.</em></h2><p>Start with open building blocks. Adapt multisensory inspection to the problems you know best.</p><a className="pill bright-pill" href="#contact">Explore Imagination <ArrowUpRight size={15}/></a></ScrollAsciiReveal><div className="open-art" data-reveal><img src="/img/toolkit2.webp" alt="Illustrative inspection toolkit graphic" loading="lazy" decoding="async"/><div className="code-stamp">OPEN<br/>BY DESIGN</div></div></section>
 
     <IndustryExplorer />
 
