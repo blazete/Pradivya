@@ -1,5 +1,5 @@
-@font-face{font-family:Geist;font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/Geist-var.ttf') format('truetype')}
-@font-face{font-family:'Geist Mono';font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/GeistMono-var.ttf') format('truetype')}
+@font-face{font-family:Geist;font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/Geist-var.woff2') format('woff2')}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/GeistMono-var.woff2') format('woff2')}
 .physical-page:has(.sequence-hero){overflow:clip}
 .sequence-hero{position:relative;height:650svh;background:#fff;color:#fff;--scrim-opacity:.35;--exit-progress:0;--sequence-ink:color-mix(in srgb,#fff calc((1 - var(--exit-progress))*100%),#1b0624)}
 .sequence-stage{height:100svh;position:sticky;top:0;overflow:hidden;isolation:isolate;--fault-color:#ff697c}
@@ -46,4 +46,5 @@
 .physical-page .section-heading,.physical-page .open-copy{font-family:Geist,Arial,sans-serif}
 @media(max-width:768px){.sequence-hero{height:570svh}.sequence-chapter{top:auto;bottom:12%;width:90%;transform:translateX(-50%)}.physical-page .sequence-chapter h1,.physical-page .sequence-chapter h2{font-size:clamp(33px,8.5vw,54px);margin-bottom:17px;line-height:1.06}.sequence-chapter p{font-size:12px;max-width:290px;margin-bottom:18px}.sequence-eyebrow{font-size:8px;margin-bottom:14px}.sequence-cta{font-size:15px;min-height:52px;padding:13px 24px}.sequence-scrim{mask-image:linear-gradient(0deg,#000 15%,transparent 60%)}.sequence-foot{left:7%;right:7%;bottom:22px;font-size:7px}.sequence-foot>a{display:none}.sequence-fault{width:245px}.sequence-fault-surface{padding:14px 16px}.sequence-fault-brand{margin-bottom:10px}.sequence-fault strong{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.sequence-hero{height:100svh}.sequence-letter{opacity:1}.sequence-chapter.is-active .sequence-letter,.sequence-marker.is-active i{animation:none}.sequence-stage canvas,.sequence-chapter,.sequence-loader,.sequence-fault,.sequence-fault-surface,.sequence-fault-brand,.sequence-fault strong,.sequence-fault-detail,.sequence-leader,.sequence-leader line{transition:none}}
+.sequence-chapter:has(.sequence-opening-reveal){transition:opacity .3s}
 .sequence-opening-reveal{opacity:0}.sequence-opening-reveal.is-decoding,.is-reduced .sequence-opening-reveal{opacity:1}

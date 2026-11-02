@@ -35,7 +35,7 @@ export default function SequenceHero() {
       animation = gsap.to(lines, { duration: 1.25, stagger: .12, scrambleText: { text: '{original}', chars: '01<>/[]{}', revealDelay: .15, speed: .5 }, onComplete: () => heading.classList.add('decode-complete') });
       chapter?.removeEventListener('transitionend', play);
     };
-    void document.fonts.ready.then(() => {
+    void document.fonts.load('400 64px Geist').then(() => {
       if (disposed) return;
       chapter?.addEventListener('transitionend', play);
       play();

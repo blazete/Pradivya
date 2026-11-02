@@ -8,10 +8,8 @@ export class SequencePlayer {
     this.fit={x:0,y:0,w:1,h:1};this.resize=this.resize.bind(this);addEventListener('resize',this.resize);this.resize();
   }
   async init(onProgress=()=>{}) {
-    const first=Math.min(this.count,6);let done=0;
     await this.load(0);if(!this.cache.has(0))throw new Error('Opening frame unavailable');this.draw(0);
-    for(let start=1;start<first;start+=this.conc)await Promise.all(Array.from({length:Math.min(this.conc,first-start)},(_,j)=>this.load(start+j).then(()=>onProgress(++done/(first-1)))));
-    this.schedule();
+    onProgress(1);this.schedule();
   }
   resize(){const dpr=Math.min(globalThis.devicePixelRatio||1,2),w=Math.max(1,Math.round(this.canvas.clientWidth*dpr)),h=Math.max(1,Math.round(this.canvas.clientHeight*dpr));if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;this.draw(this.current);}
   load(i) {

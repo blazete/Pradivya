@@ -198,3 +198,14 @@ test('opening ASCII reveal runs after readiness and only once per visit', async 
  await expect(heading).toHaveClass(/decode-complete/);
  await expect(page.locator('.opening-line').first()).toHaveText('Intelligence for');
 });
+
+test('first frame becomes ready while neighboring frames are still loading', async ({page})=>{
+ let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/web/frames/**',async route=>{if(!route.request().url().endsWith('/0000.webp'))await gate;await route.continue();});
+ try{
+  await page.goto('/');await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+  await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','0');
+  await expect(page.locator('.sequence-loader')).toBeHidden();
+  await expect(page.locator('.sequence-stage canvas')).toHaveCSS('opacity','1');
+ }finally{release();}
+});
