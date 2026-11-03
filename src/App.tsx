@@ -14,6 +14,7 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Legal = lazy(() => import('./pages/Legal'));
 const Investors = lazy(() => import('./pages/Investors'));
 import ThemeProvider from './contexts/ThemeContext';
+import { withBase } from './lib/base';
 
 function AppLayout() {
   const isLanding = useLocation().pathname === '/';
@@ -35,7 +36,7 @@ function AppLayout() {
               <Route path="/technology" element={<Technology />} />
               <Route path="/achievements" element={<Achievements />} />
               <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<div style={{padding:"120px 8%"}}><h1>Page not found</h1><a href="/">Return to Pradivya</a></div>}/></Routes></Suspense>
+            <Route path="*" element={<div style={{padding:"120px 8%"}}><h1>Page not found</h1><a href={withBase("/")}>Return to Pradivya</a></div>}/></Routes></Suspense>
           </main>
           {!isLanding && <Footer />}
 
@@ -46,6 +47,6 @@ function AppLayout() {
   );
 }
 
-function App() { return <ThemeProvider><Router><AppLayout/></Router></ThemeProvider>; }
+function App() { return <ThemeProvider><Router basename={import.meta.env.BASE_URL.replace(/\/$/, '')}><AppLayout/></Router></ThemeProvider>; }
 
 export default App;

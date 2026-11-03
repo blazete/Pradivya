@@ -2,6 +2,7 @@ import React from 'react';
 import { Award, Users, Target, Star } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
 import TeamMember from './TeamMember';
+import { withBase } from '../lib/base';
 
 const teamMembers = [
  
@@ -9,7 +10,7 @@ const teamMembers = [
     name: 'Ruchi Dogra',
     role: 'Team Lead- Software Development',
     bio: '',
-    image: '/team/ruchi.jpg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/ruchi.jpg?auto=compress&cs=tinysrgb&w=600'),
     social: {
     
       linkedin: 'https://www.linkedin.com/in/ruchi-dogra/',
@@ -19,7 +20,7 @@ const teamMembers = [
     name: 'Amit Pal',
     role: 'Project Lead',
     bio: '',
-    image: '/team/Amit.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/Amit.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
     
       linkedin: 'https://www.linkedin.com/in/amit-p-58042977/',
@@ -29,7 +30,7 @@ const teamMembers = [
     name: 'Tanmay Tandon',
     role: 'Senior Android Developer',
     bio: '',
-    image: '/team/Tanmay1.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/Tanmay1.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
     
       linkedin: 'https://www.linkedin.com/in/tanmay-tandon-58a741b4/',
@@ -39,7 +40,7 @@ const teamMembers = [
     name: 'Tushar',
     role: 'Technical sales engineer',
     bio: '',
-    image: '/team/Tushar.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/Tushar.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/tushar-pal-85ba2b27a/',
     }
@@ -50,7 +51,7 @@ const teamLeader = [
     name: 'Prasoon Sharma',
     role: 'CEO & Founder',
     bio: 'Advisory Board Member - Nasdaq Entrepreneurial Center. Visionary leader driving AI innovation and industrial transformation with expertise in strategic partnerships and global market expansion.',
-    image: '/team/prasoonS.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/prasoonS.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/prasoon-sharma-nyu/',
    
@@ -62,7 +63,7 @@ const teamLeader = [
     name: 'Ashwani Singh',
     role: 'CTO & Co-Founder',
     bio: '3x Entrepreneur | 3x Corporate Intrapreneur (Intel, Qualcomm, Infosys) | Technology Policy & Frameworks, Startups & Angel Investors Advisor | Product roadmaps',
-    image: '/team/ashwani.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/ashwani.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/singhashwani/',
      
@@ -74,7 +75,7 @@ const teamLeader = [
     name: 'Dr Divya Sharma',
     role: 'Co-Founder & HR Head',
     bio: 'Business development, training and research specialist with extensive experience in organizational growth, talent management, and strategic human resources.',
-    image: '/team/divya.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/divya.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
     
       linkedin: 'https://www.linkedin.com/in/dr-divya-sharma-74b939a/',
@@ -88,7 +89,7 @@ const advisorsAndMentors = [
     name: 'Arun Arora',
     role: 'Advisor',
     bio: 'Senior Advisor / Technical, Kolkata Metro Rail Corporation Ltd., Ministry of Rlys',
-    image: '/team/arun.jpeg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/arun.jpeg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/arun-arora-685a6538/',
     }
@@ -97,7 +98,7 @@ const advisorsAndMentors = [
     name: 'R (SHYAM) Shyamsunder',
     role: 'Mentor',
     bio: 'Ex-Managing Director - Investments, Temasek Holdings',
-    image: '/team/r_shyamsunder.jpg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/r_shyamsunder.jpg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/r-shyam-shyamsunder-a4b96843/',
     }
@@ -106,7 +107,7 @@ const advisorsAndMentors = [
     name: 'Satya S. Tripathi',
     role: 'Advisor',
     bio: 'Secretary-General, Global Alliance for a Sustainable Planet',
-    image: '/team/satya.jpg?auto=compress&cs=tinysrgb&w=600',
+    image: withBase('/team/satya.jpg?auto=compress&cs=tinysrgb&w=600'),
     social: {
       linkedin: 'https://www.linkedin.com/in/satya-s-tripathi-5b9b078a/',
     }
@@ -242,14 +243,14 @@ const Team: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="/contact"
+                href={withBase("/contact")}
                 className="inline-flex items-center px-6 py-3 bg-pradivya-primary hover:bg-pradivya-primary/90 text-white rounded-lg font-medium transition-all hover:shadow-lg"
               >
                 <Users className="h-5 w-5 mr-2" />
                 Join Our Team
               </a>
               <a
-                href="/about"
+                href={withBase("/about")}
                 className="inline-flex items-center px-6 py-3 bg-transparent border-2 border-pradivya-accent text-pradivya-accent hover:bg-pradivya-accent hover:text-white rounded-lg font-medium transition-all"
               >
                 <Target className="h-5 w-5 mr-2" />

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import './ascii-wake.css';
+import { withBase } from '../../lib/base';
 
 /* ══ ASCII wake ═══════════════════════════════════════════
    A cube drawn in ink dots, the dots shrinking toward
@@ -209,7 +210,7 @@ export function ASCIIWake({
       ctx.drawImage(image,left,top,right-left,bottom-top,(W-w)/2,(H-h)/2,w,h);
       source.current=ctx.getImageData(0,0,W,H);build();paint();setReady(true);
     };
-    image.src='/img/pradivya-logo.webp';
+    image.src=withBase('/img/pradivya-logo.webp');
     return()=>{mounted=false;image.onload=null;};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
@@ -246,7 +247,7 @@ export function ASCIIWake({
   };
   const press=(x:number,y:number)=>{if(reduced.current)return;st.current.rings.push({x,y,t:0});run();};
   return <div className="asc" onPointerEnter={e=>{st.current.lx=NaN;move(e);}} onPointerMove={move} onPointerLeave={()=>{st.current.inside=false;st.current.lx=NaN;run();}} onPointerDown={e=>{const p=where(e);press(p.x,p.y);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();press(W/2,H/2);}}} role="button" tabIndex={0} aria-label="Animate the Pradivya ASCII logo" title="Move to leave a wake. Press for a ripple.">
-    {!ready&&<img className="asc-fallback" src="/img/pradivya-logo.webp" alt=""/>}
+    {!ready&&<img className="asc-fallback" src={withBase("/img/pradivya-logo.webp")} alt=""/>}
     <canvas ref={cv} className="asc-canvas" width={W} height={H} aria-hidden="true"/>
   </div>;
 }

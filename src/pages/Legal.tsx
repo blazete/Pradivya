@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, FileText, Users, Gavel, ArrowUp, Info, Scale, CheckCircle } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
+import { withBase } from '../lib/base';
 
 const sections = [
     { id: 'overview', title: 'Overview', icon: <Info className="h-5 w-5" /> },
@@ -404,7 +405,7 @@ const Legal: React.FC = () => {
                         Legal Department
                       </a>
                       <a 
-                        href="/contact"
+                        href={withBase("/contact")}
                         className="inline-flex items-center px-6 py-3 border-2 border-pradivya-accent text-pradivya-accent rounded-lg hover:bg-pradivya-accent hover:text-white transition-colors"
                       >
                         <Users className="h-5 w-5 mr-2" />

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play } from 'lucide-react';
 import './builders.css';
+import { withBase } from '../lib/base';
 
 const people = [
-  { name: 'Sebastian Grimm', category: 'Advisor', role: 'Head of Innovation Lab / move+ Accelerator · ZF', image: '/team/sebastian-grimm.jpg', position: '50% 26%', bio: 'Connecting startups and industry through innovation, venture development and the move+ Accelerator.', experience: 'ZF Innovation Lab · move+ Accelerator', profile: 'https://www.heilbronnslushd.com/speaker/sebastian-grimm', label: 'Profile' },
-  { name: 'R. (Shyam) Shyamsunder', category: 'Advisor', role: 'Former Managing Director, Investments · Temasek', image: '/team/r_shyamsunder.jpg', position: '50% 25%', bio: 'Investment leadership and strategic perspective, with experience as Managing Director, Investments at Temasek.', experience: 'Formerly · Temasek Holdings', profile: 'https://www.linkedin.com/in/r-shyam-shyamsunder-a4b96843/', label: 'LinkedIn' },
-  { name: 'Prasoon Sharma', category: 'Founder', role: 'CEO & Founder', image: '/team/prasoonS.jpeg', position: '50% 30%', bio: 'Building industrial AI through strategic partnerships and global market development.', experience: 'Advisory Board Member · Nasdaq Entrepreneurial Center', profile: 'https://www.linkedin.com/in/prasoon-sharma-nyu/', label: 'LinkedIn' },
-  { name: 'Ashwani Singh', category: 'Co-Founder', role: 'CTO & Co-Founder', image: '/team/ashwani.jpeg', position: '50% 30%', bio: 'Three-time entrepreneur. Technology and product experience across Intel, Qualcomm and Infosys.', experience: 'Intel · Qualcomm · Infosys', profile: 'https://www.linkedin.com/in/singhashwani/', label: 'LinkedIn' },
+  { name: 'Sebastian Grimm', category: 'Advisor', role: 'Head of Innovation Lab / move+ Accelerator · ZF', image: withBase('/team/sebastian-grimm.jpg'), position: '50% 26%', bio: 'Connecting startups and industry through innovation, venture development and the move+ Accelerator.', experience: 'ZF Innovation Lab · move+ Accelerator', profile: 'https://www.heilbronnslushd.com/speaker/sebastian-grimm', label: 'Profile' },
+  { name: 'R. (Shyam) Shyamsunder', category: 'Advisor', role: 'Former Managing Director, Investments · Temasek', image: withBase('/team/r_shyamsunder.jpg'), position: '50% 25%', bio: 'Investment leadership and strategic perspective, with experience as Managing Director, Investments at Temasek.', experience: 'Formerly · Temasek Holdings', profile: 'https://www.linkedin.com/in/r-shyam-shyamsunder-a4b96843/', label: 'LinkedIn' },
+  { name: 'Prasoon Sharma', category: 'Founder', role: 'CEO & Founder', image: withBase('/team/prasoonS.jpeg'), position: '50% 30%', bio: 'Building industrial AI through strategic partnerships and global market development.', experience: 'Advisory Board Member · Nasdaq Entrepreneurial Center', profile: 'https://www.linkedin.com/in/prasoon-sharma-nyu/', label: 'LinkedIn' },
+  { name: 'Ashwani Singh', category: 'Co-Founder', role: 'CTO & Co-Founder', image: withBase('/team/ashwani.jpeg'), position: '50% 30%', bio: 'Three-time entrepreneur. Technology and product experience across Intel, Qualcomm and Infosys.', experience: 'Intel · Qualcomm · Infosys', profile: 'https://www.linkedin.com/in/singhashwani/', label: 'LinkedIn' },
 ];
 
 export default function Builders() {

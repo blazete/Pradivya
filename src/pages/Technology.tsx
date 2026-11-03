@@ -1,6 +1,7 @@
 import React from 'react';
 import { Eye, Brain, Waves, Network, Cpu, Shield } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
+import { withBase } from '../lib/base';
 
 const Technology: React.FC = () => {
   const { ref: heroRef, isInView: heroInView } = useInView({ threshold: 0.1 });
@@ -168,7 +169,7 @@ const Technology: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-br from-pradivya-accent/10 to-pradivya-primary/10"></div>
                               <div className="text-center z-10">
                                    <img
-                                  src="/img/plateformarc.webp"
+                                  src={withBase("/img/plateformarc.webp")}
                                   alt="Defect Detection Analysis"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />

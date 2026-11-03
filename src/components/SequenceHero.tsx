@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { SequencePlayer } from '../lib/sequence-player';
 import './sequence-hero.css';
+import { withBase } from '../lib/base';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 const chapters = [
@@ -108,12 +109,12 @@ export default function SequenceHero() {
       };
       void (async () => {
         try {
-          const response = await fetch(`/web/overlay_${camera}.json`, { signal: controller.signal, mode: 'same-origin' });
+          const response = await fetch(withBase(`/web/overlay_${camera}.json`), { signal: controller.signal, mode: 'same-origin' });
           if (!response.ok) throw new Error('Sequence metadata unavailable');
           const data: Metadata = await response.json();
           if (data.frames !== 300 || !data.anchors || !data.callouts) throw new Error('Invalid sequence metadata');
           if (controller.signal.aborted) return;
-          player = new SequencePlayer({ canvas, urlFor: i => `/web/frames/${camera}/${String(i).padStart(4, '0')}.webp`, frameCount: reduced.matches ? 1 : data.frames, window: media.matches ? 8 : 12, concurrency: media.matches ? 3 : 4, maxCacheBytes: (media.matches ? 64 : 128) * 1024 * 1024, onFrame: f => update(f, data), onError: () => section.classList.add('has-error') });
+          player = new SequencePlayer({ canvas, urlFor: i => withBase(`/web/frames/${camera}/${String(i).padStart(4, '0')}.webp`), frameCount: reduced.matches ? 1 : data.frames, window: media.matches ? 8 : 12, concurrency: media.matches ? 3 : 4, maxCacheBytes: (media.matches ? 64 : 128) * 1024 * 1024, onFrame: f => update(f, data), onError: () => section.classList.add('has-error') });
           await player.init();
           if (controller.signal.aborted) return;
           section.classList.add('is-ready'); setLoading(false); update(0, data);
@@ -137,7 +138,7 @@ export default function SequenceHero() {
   }, []);
   return <section ref={root} id="top" className="sequence-hero" aria-label="Pradivya physical AI: road, rail and air">
     <div className="sequence-stage">
-      <picture className="sequence-poster"><source media="(max-width:768px)" srcSet="/web/hero-poster-mobile.webp"/><img src="/web/hero-poster-desktop.webp" alt="Silver sports car on an industrial road in warm sunset light" fetchPriority="high"/></picture>
+      <picture className="sequence-poster"><source media="(max-width:768px)" srcSet={withBase("/web/hero-poster-mobile.webp")}/><img src={withBase("/web/hero-poster-desktop.webp")} alt="Silver sports car on an industrial road in warm sunset light" fetchPriority="high"/></picture>
       <canvas aria-label="Illustrative inspection sequence: car, train and aircraft" role="img"/>
       <div className="sequence-scrim"/>
       <div className="sequence-transition" aria-hidden="true"/>
@@ -149,10 +150,10 @@ export default function SequenceHero() {
       </div>; })}
       <svg className="sequence-leader" aria-hidden="true"><line pathLength="1"/></svg>
       <div className="sequence-marker" aria-hidden="true"><i/></div>
-      <div className="sequence-fault" aria-hidden="true"><div className="sequence-fault-surface"><div className="sequence-fault-brand"><img src="/img/pradivya-logo-small.webp" alt=""/><span>FAULT IDENTIFIED</span></div><strong/><span className="sequence-fault-detail"/></div></div>
-      <div className="sequence-foot"><span>ILLUSTRATIVE INSPECTION · <a href="/hero-credits.html">CREDITS</a></span><a href="#thesis">SCROLL TO DISCOVER ↓</a></div>
+      <div className="sequence-fault" aria-hidden="true"><div className="sequence-fault-surface"><div className="sequence-fault-brand"><img src={withBase("/img/pradivya-logo-small.webp")} alt=""/><span>FAULT IDENTIFIED</span></div><strong/><span className="sequence-fault-detail"/></div></div>
+      <div className="sequence-foot"><span>ILLUSTRATIVE INSPECTION · <a href={withBase("/hero-credits.html")}>CREDITS</a></span><a href="#thesis">SCROLL TO DISCOVER ↓</a></div>
       <div className="sequence-loader" role="status" aria-label={loading ? 'Preparing inspection animation' : 'Inspection animation ready'}>
-        <img className="sequence-loader-logo" src="/img/pradivya-logo-small.webp" alt=""/>
+        <img className="sequence-loader-logo" src={withBase("/img/pradivya-logo-small.webp")} alt=""/>
         <span className="sequence-loader-label">INITIALIZING PHYSICAL AI</span>
         <AsciiReveal loading={loading} preset="terminal" lazy={false} revealOnMount={false}>
           {loading ? <AsciiSkeleton variant="scan" rows={4} width={220} height={48}/> : <span className="sequence-loader-ready">READY</span>}

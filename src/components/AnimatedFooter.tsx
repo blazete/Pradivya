@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { mountAsciiFooter } from './asciiFooterField';
 import { ASCIIWake } from './ASCIIWake/ASCIIWake';
 import './animated-footer.css';
+import { withBase } from '../lib/base';
 
 export default function AnimatedFooter() {
   const root = useRef<HTMLElement>(null);
@@ -34,11 +35,11 @@ export default function AnimatedFooter() {
     <canvas ref={canvas} className="ascii-footer-canvas" aria-hidden="true"/>
     <div className="ascii-footer-content">
       <div className="ascii-footer-brand"><ASCIIWake/><small>PHYSICAL AI</small></div>
-      <div className="ascii-footer-invitation"><p>See what your cameras miss.<br/><a href="/contact">Let’s take a closer look.<span aria-hidden="true"> ↗</span></a></p><a className="ascii-footer-demo" href="/contact">Book a demo <span aria-hidden="true">↗</span></a></div>
+      <div className="ascii-footer-invitation"><p>See what your cameras miss.<br/><a href={withBase("/contact")}>Let’s take a closer look.<span aria-hidden="true"> ↗</span></a></p><a className="ascii-footer-demo" href={withBase("/contact")}>Book a demo <span aria-hidden="true">↗</span></a></div>
       <nav className="ascii-footer-navigation" aria-label="Footer">
         <div className="ascii-footer-column"><span>Explore</span><a href="#products">Products</a><a href="#open-source">Open source</a><a href="#industries">Industries</a><a href="#opportunity">Opportunity</a></div>
-        <div className="ascii-footer-column"><span>Company</span><a href="#team">Our people</a><a href="#hub">The Hub</a><a href="/about">About</a><a href="/contact">Contact</a></div>
-        <div className="ascii-footer-column"><span>Legal</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/legal">Legal notice</a></div>
+        <div className="ascii-footer-column"><span>Company</span><a href="#team">Our people</a><a href="#hub">The Hub</a><a href={withBase("/about")}>About</a><a href={withBase("/contact")}>Contact</a></div>
+        <div className="ascii-footer-column"><span>Legal</span><a href={withBase("/privacy")}>Privacy</a><a href={withBase("/terms")}>Terms</a><a href={withBase("/legal")}>Legal notice</a></div>
       </nav>
       <div className="ascii-footer-bottom"><span>© {new Date().getFullYear()} Pradivya</span><a href="#top">Back to top ↑</a></div>
     </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView } from '../hooks/useInView';
 import { Train, Factory, Shield, Brain, Waves, Network, ArrowRight, CheckCircle, AlertTriangle } from 'lucide-react';
+import { withBase } from '../lib/base';
 
 const Solutions: React.FC = () => {
   const { ref: heroRef, isInView: heroInView } = useInView({ threshold: 0.1 });
@@ -213,7 +214,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-primary/10 to-pradivya-accent/10"></div>
                               <div className="text-center z-10">
                                   <img
-                                  src="/img/ards.png"
+                                  src={withBase("/img/ards.png")}
                                   alt="Real-time Detection"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -230,7 +231,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-accent/10 to-pradivya-primary/10"></div>
                               <div className="text-center z-10">
                                  <img
-                                  src="/img/ards1.png"
+                                  src={withBase("/img/ards1.png")}
                                   alt="Advanced Analytics"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -255,7 +256,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-primary/10 to-pradivya-accent/10"></div>
                               <div className="text-center z-10">
                                     <img
-                                  src="/img/ar1.jpg"
+                                  src={withBase("/img/ar1.jpg")}
                                   alt="Custom Robotics"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -272,7 +273,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-accent/10 to-pradivya-primary/10"></div>
                               <div className="text-center z-10">
                                      <img
-                                  src="/img/ar2.jpg"
+                                  src={withBase("/img/ar2.jpg")}
                                   alt="Quality Assurance"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -289,7 +290,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-primary/10 to-pradivya-accent/10"></div>
                               <div className="text-center z-10">
                                    <img
-                                  src="/img/ar.jpg"
+                                  src={withBase("/img/ar.jpg")}
                                   alt="Oject Detection"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -313,7 +314,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-primary/10 to-pradivya-accent/10"></div>
                               <div className="text-center z-10">
                                      <img
-                                  src="/img/toolkit2.webp"
+                                  src={withBase("/img/toolkit2.webp")}
                                   alt="Smart Wearables"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -330,7 +331,7 @@ const Solutions: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-pradivya-accent/10 to-pradivya-primary/10"></div>
                               <div className="text-center z-10">
                                     <img
-                                  src="/img/toolkit1.webp"
+                                  src={withBase("/img/toolkit1.webp")}
                                   alt="Safety Dashboard"
                                   className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -427,7 +428,7 @@ const Solutions: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
           
-            <a href="/contact" className="btn-secondary">
+            <a href={withBase("/contact")} className="btn-secondary">
               Contact Sales
             </a>
           </div>

@@ -6,9 +6,12 @@ test('responsive landing page, local assets and core interactions', async ({ pag
   page.on('pageerror', error => errors.push(error.message));
   const broken: string[] = [];
   page.on('response', response => { if (response.status() >= 400 && response.url().startsWith('http://127.0.0.1')) broken.push(response.url()); });
+  // Served under pradivya.com/ai/: nothing may load from the main site's root (/img, /fonts, /assets ...).
+  const outside: string[] = [];
+  page.on('request', r => { const u = new URL(r.url()); if (u.hostname === '127.0.0.1' && !u.pathname.startsWith('/ai/')) outside.push(u.pathname); });
   for (const width of [360, 390, 768, 1024, 1414]) {
     await page.setViewportSize({ width, height: width < 768 ? 844 : 827 });
-    await page.goto('/');
+    await page.goto('');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     for (const id of ['top','thesis','platform','products','open-source','industries','opportunity','team','hub','contact']) {
       await page.locator(`#${id}`).scrollIntoViewIfNeeded();
@@ -23,7 +26,7 @@ test('responsive landing page, local assets and core interactions', async ({ pag
     }
   }
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/');
+  await page.goto('');
   await page.getByRole('button', {name:'Open navigation'}).click();
   await expect(page.getByRole('navigation', {name:'Main navigation'})).toBeVisible();
   await page.keyboard.press('Escape');
@@ -40,17 +43,17 @@ test('responsive landing page, local assets and core interactions', async ({ pag
   await page.getByRole('tab',{name:/Sebastian Grimm/}).click();
   await expect(page.getByRole('tabpanel',{name:/Sebastian Grimm/})).toBeVisible();
   await page.reload();
-  await expect(page).toHaveURL('/');
+  await expect(page).toHaveURL(/\/ai\/$/);
   await expect.poll(()=>page.evaluate(()=>scrollY)).toBeLessThan(5);
   const links=await page.locator('a[href^="/"]').evaluateAll(nodes=>[...new Set(nodes.map(n=>(n as HTMLAnchorElement).getAttribute('href')!))]);
   for(const href of links) expect((await request.get(href)).ok(),href).toBe(true);
-  expect(errors).toEqual([]); expect(broken).toEqual([]);
+  expect(errors).toEqual([]); expect(broken).toEqual([]); expect(outside).toEqual([]);
 });
 
 test('accessible landing page and contact form with reduced motion', async ({page})=>{
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.setViewportSize({width:1414,height:827});
-  await page.goto('/');
+  await page.goto('');
   const landing=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
   expect(landing.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);
   await page.getByRole('link',{name:'Book a demo',exact:true}).first().click();
@@ -67,27 +70,28 @@ test('accessible landing page and contact form with reduced motion', async ({pag
   await expect(page.getByRole('status')).toContainText('Send it from your email app');
 });
 
-test('secondary routes render and GitHub Pages fallback restores a direct link', async ({page})=>{
-  const errors: string[]=[]; const broken: string[]=[];
+test('secondary routes render under /ai/ and a direct link opens', async ({page})=>{
+  const errors: string[]=[]; const broken: string[]=[]; const outside: string[]=[];
+  page.on('request',r=>{const u=new URL(r.url());if(u.hostname==='127.0.0.1'&&!u.pathname.startsWith('/ai/'))outside.push(u.pathname);});
   page.on('pageerror',error=>errors.push(error.message));
   page.on('response',response=>{if(response.status()>=400&&response.url().startsWith('http://127.0.0.1'))broken.push(response.url());});
-  for(const route of ['/about','/technology','/achievements','/solutions','/investors','/terms','/privacy','/legal','/contact']){
+  for(const route of ['about','technology','achievements','solutions','investors','terms','privacy','legal','contact']){
     await page.goto(route);
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
     await page.evaluate(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'instant'}));
     await page.waitForTimeout(150);
   }
-  await page.goto('/?__path=%2Fcontact%23request');
-  await expect(page).toHaveURL(/\/contact#request$/);
+  await page.goto('contact#request');
+  await expect(page).toHaveURL(/\/ai\/contact#request$/);
   await expect(page.getByRole('form',{name:'Contact request'})).toBeVisible();
-  expect(errors).toEqual([]);expect(broken).toEqual([]);
+  expect(errors).toEqual([]);expect(broken).toEqual([]);expect(outside).toEqual([]);
 });
 
 test('sequence follows scroll, brands faults, and switches responsive assets', async ({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  for(const width of [1440,390]){
-  await page.setViewportSize({width,height:900});await page.goto('/');
+  await page.setViewportSize({width,height:900});await page.goto('');
   const hero=page.locator('.sequence-hero');await expect(hero).toHaveClass(/is-ready/);
   const geometry=await page.locator('.sequence-stage').evaluate(el=>({top:el.getBoundingClientRect().top,width:el.clientWidth,height:el.clientHeight,viewportWidth:innerWidth,viewportHeight:innerHeight}));
   expect(geometry.top).toBe(0);expect(geometry.width).toBe(geometry.viewportWidth);expect(geometry.height).toBe(geometry.viewportHeight);
@@ -108,11 +112,11 @@ test('sequence follows scroll, brands faults, and switches responsive assets', a
 
 test('mobile dark preference remains accessible', async ({page})=>{
  await page.emulateMedia({colorScheme:'dark',reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});
- for(const route of ['/','/contact']){await page.goto(route);const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);}
+ for(const route of ['','contact']){await page.goto(route);const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();expect(result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);}
 });
 
 test('platform messaging, market forecasts and advisor-first timing', async ({page})=>{
- await page.setViewportSize({width:1414,height:827});await page.goto('/');
+ await page.setViewportSize({width:1414,height:827});await page.goto('');
  await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName(/Intelligence for a world in motion/);
  await expect(page.locator('.association-group').first().getByRole('img',{name:/University of Chicago/})).toHaveCount(1);
  for(const name of ['Microsoft','Google','ZF']) await expect(page.locator('.association-group').first().getByRole('img',{name:new RegExp(name+' —')})).toHaveCount(1);
@@ -126,17 +130,17 @@ test('platform messaging, market forecasts and advisor-first timing', async ({pa
 });
 
 test('reduced motion stays on a still; missing frames retain poster and navigation', async ({page})=>{
- await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto('');
  await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
  await expect(page.locator('.sequence-hero')).toHaveClass(/is-reduced/);
  await page.locator('#platform').scrollIntoViewIfNeeded();await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','0');
  await page.route('**/web/frames/**',route=>route.fulfill({status:503,body:'unavailable'}));
- await page.goto('/');await expect(page.locator('.sequence-error')).toBeVisible();
+ await page.goto('');await expect(page.locator('.sequence-error')).toBeVisible();
  await expect(page.locator('.sequence-poster img')).toBeVisible();await expect(page.getByRole('heading',{level:1})).toBeVisible();
 });
 
 test('centered chapter typography and ASCII reveal start in view', async ({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await page.setViewportSize({width:1440,height:900});await page.goto('');
  await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
  await expect(page.locator('.sequence-chapter').first()).toHaveCSS('text-align','center');
  await expect(page.getByRole('heading',{level:1})).toHaveAccessibleName('Intelligence for a world in motion.');
@@ -151,7 +155,7 @@ test('ASCII loader keeps poster and navigation visible, then clears on readiness
  let release!:()=>void;
  const gate=new Promise<void>(resolve=>{release=resolve;});
  await page.route('**/web/frames/desktop/0000.webp',async route=>{await gate;await route.continue();});
- await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await page.setViewportSize({width:1440,height:900});await page.goto('');
  await expect(page.getByRole('status',{name:'Preparing inspection animation'})).toBeVisible();
  await expect(page.locator('.sequence-loader [data-ascii-skeleton]')).toHaveCount(1);
  await expect(page.locator('.sequence-poster img')).toBeVisible();
@@ -162,7 +166,7 @@ test('ASCII loader keeps poster and navigation visible, then clears on readiness
 
 
 test('clean hero, glass fault card and white scroll exit', async ({page})=>{
- await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await page.setViewportSize({width:1440,height:900});await page.goto('');
  const hero=page.locator('.sequence-hero');await expect(hero).toHaveClass(/is-ready/);
  await expect(page.getByRole('link',{name:'Explore the platform'})).toHaveCount(0);
  for(const label of ['01 / ROAD','02 / RAIL','03 / AIR'])await expect(page.getByText(label,{exact:true})).toHaveCount(0);
@@ -181,7 +185,7 @@ test('clean hero, glass fault card and white scroll exit', async ({page})=>{
 test('opening ASCII reveal runs after readiness and only once per visit', async ({page})=>{
  let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
  await page.route('**/web/frames/desktop/0000.webp',async route=>{await gate;await route.continue();});
- await page.setViewportSize({width:1440,height:900});await page.goto('/');
+ await page.setViewportSize({width:1440,height:900});await page.goto('');
  await expect(page.getByRole('status',{name:'Preparing inspection animation'})).toBeVisible();
  const heading=page.locator('.sequence-opening-reveal');
  await expect(heading).not.toHaveClass(/is-decoding/);
@@ -203,7 +207,7 @@ test('first frame becomes ready while neighboring frames are still loading', asy
  let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
  await page.route('**/web/frames/**',async route=>{if(!route.request().url().endsWith('/0000.webp'))await gate;await route.continue();});
  try{
-  await page.goto('/');await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
+  await page.goto('');await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/);
   await expect(page.locator('.sequence-hero')).toHaveAttribute('data-frame','0');
   await expect(page.locator('.sequence-loader')).toBeHidden();
   await expect(page.locator('.sequence-stage canvas')).toHaveCSS('opacity','1');
