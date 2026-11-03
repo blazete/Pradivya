@@ -39,7 +39,7 @@ export default function AnimatedFooter() {
       <nav className="ascii-footer-navigation" aria-label="Footer">
         <div className="ascii-footer-column"><span>Explore</span><a href="#products">Products</a><a href="#open-source">Open source</a><a href="#industries">Industries</a><a href="#opportunity">Opportunity</a></div>
         <div className="ascii-footer-column"><span>Company</span><a href="#team">Our people</a><a href="#hub">The Hub</a><a href={withBase("/about")}>About</a><a href={withBase("/contact")}>Contact</a></div>
-        <div className="ascii-footer-column"><span>Legal</span><a href={withBase("/privacy")}>Privacy</a><a href={withBase("/terms")}>Terms</a><a href={withBase("/legal")}>Legal notice</a></div>
+        <div className="ascii-footer-column"><span>Legal</span><a href={withBase("/privacy")}>Privacy</a><a href={withBase("/terms")}>Terms</a><a href={withBase("/legal")}>Legal notice</a><a href={withBase("/hero-credits.html")}>Asset credits</a></div>
       </nav>
       <div className="ascii-footer-bottom"><span>© {new Date().getFullYear()} Pradivya</span><a href="#top">Back to top ↑</a></div>
     </div>

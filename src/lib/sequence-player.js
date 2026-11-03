@@ -7,7 +7,7 @@ export class SequencePlayer {
     this.urlFor=urlFor;this.count=frameCount;this.conc=concurrency;this.maxBytes=maxCacheBytes;this.onError=onError;this.onFrame=onFrame;
     this.loadable=new Set([...Array(frameCount).keys()].filter(i=>i%stride===0||keep.includes(i)||i===frameCount-1));
     this.blobs=new Map();this.fetching=new Map();this.waits=new Map();this.queue=[];this.cache=new Map();this.decoding=new Map();this.failed=new Set();
-    this.current=0;this.displayed=-1;this.direction=1;this.ahead=12;this.behind=3;this.closed=false;
+    this.current=0;this.displayed=-1;this.blend=0;this.direction=1;this.ahead=12;this.behind=3;this.closed=false;
     this.fit={x:0,y:0,w:1,h:1};this.resize=this.resize.bind(this);addEventListener('resize',this.resize);this.resize();
   }
   async init() {
@@ -56,8 +56,10 @@ export class SequencePlayer {
     const missing=wanted.filter(i=>!this.blobs.has(i)&&!this.fetching.has(i)&&!this.failed.has(i));if(missing.length)this.enqueue(missing,true);
     for(const i of wanted){if(this.decoding.size>=this.conc)break;void this.decode(i);}
   }
-  setProgress(progress){const i=Math.round(Math.min(1,Math.max(0,progress))*(this.count-1));if(i!==this.current){this.direction=Math.sign(i-this.current);this.current=i;this.schedule();}this.draw(i);return i;}
-  draw(i){
+  setProgress(progress){const pos=Math.min(1,Math.max(0,progress))*(this.count-1),i=Math.round(pos);if(i!==this.current){this.direction=Math.sign(i-this.current);this.current=i;this.schedule();}this.draw(i,pos);return i;}
+  // pos: fractional playhead. The nearest frame is drawn and its neighbour blended over it by distance, so slow
+  // playback (the eased end of a step, every-second-frame phones) glides instead of ticking frame by frame.
+  draw(i,pos=i){
     let index=i;
     if(!this.cache.has(i)){index=-1;let distance=Infinity;for(const key of this.cache.keys()){
       // Hold the last image rather than overshoot and jump backward as decoding finishes.
@@ -68,10 +70,12 @@ export class SequencePlayer {
     const bmp=this.cache.get(index);if(!bmp)return;
     const cw=this.canvas.width,ch=this.canvas.height,s=Math.max(cw/bmp.width,ch/bmp.height),w=bmp.width*s,h=bmp.height*s,x=(cw-w)/2,y=(ch-h)/2;
     const dpr=cw/this.cssWidth,fit={x:x/dpr,y:y/dpr,w:w/dpr,h:h/dpr};
-    const changed=this.displayed!==index||this.lastWidth!==cw||this.lastHeight!==ch||Object.keys(fit).some(key=>fit[key]!==this.fit[key]);
-    if(!changed)return;
+    let next=-1,blend=0;if(index===i&&pos!==i){const d=pos>i?1:-1;for(let k=i+d;k>=0&&k<this.count;k+=d)if(this.loadable.has(k)){next=k;break;}if(next>=0&&this.cache.has(next))blend=Math.round(Math.abs(pos-i)/Math.abs(next-i)*32)/32;}
+    const moved=this.displayed!==index||this.lastWidth!==cw||this.lastHeight!==ch||Object.keys(fit).some(key=>fit[key]!==this.fit[key]);
+    if(!moved&&this.blend===blend)return;
     this.ctx.fillStyle='#0A0D14';this.ctx.fillRect(0,0,cw,ch);this.ctx.drawImage(bmp,x,y,w,h);
-    this.fit=fit;this.displayed=index;this.lastWidth=cw;this.lastHeight=ch;this.onFrame(index);
+    if(blend>0){this.ctx.globalAlpha=blend;this.ctx.drawImage(this.cache.get(next),x,y,w,h);this.ctx.globalAlpha=1;}
+    this.fit=fit;this.displayed=index;this.blend=blend;this.lastWidth=cw;this.lastHeight=ch;if(moved)this.onFrame(index);
   }
   toScreen(x,y){return [this.fit.x+x*this.fit.w,this.fit.y+y*this.fit.h];}
   get stats(){return {requested:this.current,displayed:this.displayed,cached:this.cache.size,fetched:this.blobs.size,pending:this.fetching.size,failed:this.failed.size,decodedBytes:[...this.cache.values()].reduce((n,b)=>n+b.width*b.height*4,0)};}

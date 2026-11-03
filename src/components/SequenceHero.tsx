@@ -9,7 +9,8 @@ import './sequence-hero.css';
 import { withBase } from '../lib/base';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
-// `rest` is the frame a scroll step settles on for each chapter; each fault callout adds a resting point at its middle frame.
+// `rest` is the frame a scroll step settles on for each chapter; each fault callout adds two resting points: its middle
+// frame, and the chapter headline again once the card has gone.
 const chapters = [
   { start: 0, end: 27, rest: 0, label: 'PHYSICAL AI · PRADIVYA', lines: ['Intelligence for', 'a world in motion.'], copy: 'See the fault. Understand the signal. Keep the world moving.' },
   { start: 28, end: 109, rest: 45, label: '', lines: ['Every surface.', 'Every signal.'], copy: 'Inspection that looks beyond the obvious.' },
@@ -18,7 +19,9 @@ const chapters = [
   { start: 268, end: 299, rest: 299, label: 'ONE MULTISENSORY PLATFORM', lines: ['Many machines.', 'One intelligence.'], copy: 'Physical AI, built for the real world.' },
 ];
 type Metadata = { frames: number; callouts: Record<string, { severity: string; title: string; detail: string; start: number; end: number }>; anchors: Record<string, [number, number, number][]> };
-const ease = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+// Ease-out cubic: answers the gesture at once and coasts into the resting frame (velocity eases to zero), instead of
+// the symmetric sine that braked late and felt abrupt (owner 2026-11-04).
+const ease = (t: number) => 1 - (1 - t) ** 3;
 
 export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis | undefined> }) {
   const root = useRef<HTMLElement>(null);
@@ -120,7 +123,9 @@ export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis 
           const data: Metadata = await response.json();
           if (data.frames !== 300 || !data.anchors || !data.callouts) throw new Error('Invalid sequence metadata');
           if (controller.signal.aborted) return;
-          const stops = [...new Set([...chapters.map(c => c.rest), ...Object.values(data.callouts).map(c => Math.round((c.start + c.end) / 2))])].sort((a, b) => a - b);
+          // Resting points (owner 2026-11-04): each chapter, each fault card's middle, and the chapter again after its card.
+          const faults = Object.values(data.callouts), chapterOf = (c: { start: number }) => chapters.find(ch => c.start >= ch.start && c.start <= ch.end)!;
+          const stops = [...new Set([...chapters.map(c => c.rest), ...faults.map(c => Math.round((c.start + c.end) / 2)), ...faults.map(c => Math.round((c.end + chapterOf(c).end) / 2))])].sort((a, b) => a - b);
           // Phones and Save-Data load every second frame (resting frames always); playback holds the previous frame in between.
           const lean = media.matches || Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
           listen(window, 'resize', measure);
@@ -131,7 +136,7 @@ export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis 
           if (reduced.matches) return;
           const p = player;
           // Stepped playback: every gesture inside the pinned hero plays to the next or previous resting frame.
-          let stepping = false, target = 0, stepDir = 0, runs = 0, rest: number | undefined;
+          let stepping = false, runs = 0, rest: number | undefined;
           const stopY = (frame: number) => trigger!.start + (trigger!.end - trigger!.start) * frame / 299;
           const frameNow = () => Math.round(Math.max(0, Math.min(1, (scrollY - trigger!.start) / Math.max(1, trigger!.end - trigger!.start))) * 299);
           const engaged = () => scrollY >= trigger!.start - 2 && scrollY <= trigger!.end + 2;
@@ -139,24 +144,22 @@ export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis 
           const prefetchAround = (frame: number) => { const i = stops.indexOf(frame); if (i < stops.length - 1) p.prefetch(frame, stops[i + 1]); if (i > 0) p.prefetch(frame, stops[i - 1]); };
           const run = (i: number) => {
             const from = frameNow(), to = stops[i], token = ++runs;
-            target = i; stepDir = Math.sign(to - from); stepping = true; rest = undefined; section.classList.add('is-stepping'); clearTimeout(settleTimer);
+            stepping = true; rest = undefined; section.classList.add('is-stepping'); clearTimeout(settleTimer);
             const done = () => { if (token !== runs) return; stepping = false; rest = to; section.classList.remove('is-stepping'); prefetchAround(to); };
             // Frames of the segment are fetched first; on a slow network the step starts anyway and holds the last good frame.
             void Promise.race([p.preload(from, to), new Promise(resolve => setTimeout(resolve, 1500))]).then(() => {
               if (token !== runs || controller.signal.aborted) return;
               const l = lenis.current;
               if (!l) { window.scrollTo({ top: stopY(to), behavior: 'instant' }); done(); return; }
-              l.scrollTo(stopY(to), { duration: Math.max(.7, Math.min(1.6, Math.abs(to - frameNow()) / 40)), easing: ease, lock: true, force: true, onComplete: done });
+              // __heroStepScale: test-only speed-up (tests/launch.spec.ts); 1 in production.
+              const scale = (window as Window & { __heroStepScale?: number }).__heroStepScale ?? 1;
+              l.scrollTo(stopY(to), { duration: scale * Math.max(1.2, Math.min(2.4, Math.abs(to - frameNow()) / 25)), easing: ease, lock: true, force: true, onComplete: done });
             });
           };
           const go = (dir: number) => {
             const f = frameNow();
-            if (stepping && dir === stepDir) {
-              // A repeated flick extends the step by one resting point, at most two ahead of the playhead.
-              const next = target + dir, between = stops.filter(s => dir > 0 ? s > f && s < stops[next] : s < f && s > stops[next]).length;
-              if (next >= 0 && next < stops.length && between <= 1) run(next);
-              return;
-            }
+            // Exactly one resting point per gesture: input while a step plays is swallowed, never queued (owner 2026-11-04).
+            if (stepping) return;
             let i = -1;
             if (dir > 0) i = stops.findIndex(s => s > f);
             else if (dir < 0) { for (let k = stops.length - 1; k >= 0; k--) if (stops[k] < f) { i = k; break; } }
@@ -164,19 +167,19 @@ export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis 
             if (i >= 0) run(i);
           };
           // A scroll that comes to rest between resting points (scrollbar, native touch momentum, restored position) finishes its step.
-          const settle = (dir: number) => { if (!stepping && !stops.includes(frameNow())) go(dir); };
+          // Not while Lenis is still animating (an anchor link passing through): a >200 ms main-thread stall would hijack it.
+          const settle = (dir: number) => { if (lenis.current?.isScrolling === 'smooth') { settleTimer = window.setTimeout(settle, 200, dir); return; } if (!stepping && !stops.includes(frameNow())) go(dir); };
           // Frames follow the document scroll 1:1; the easing comes from the step's timed scroll, so nothing smooths twice.
           trigger = ScrollTrigger.create({ trigger: section, start: 'top top', end: 'bottom bottom', onUpdate: self => { p.setProgress(self.progress); if (!stepping) { clearTimeout(settleTimer); settleTimer = window.setTimeout(settle, 200, self.direction); } } });
-          let wheel = { t: -1e9, dir: 0, peak: 0, low: 0, last: 0, owned: false };
+          let wheel = { t: -1e9, dir: 0, last: 0, owned: false };
           listen<WheelEvent>(window, 'wheel', e => {
             if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
             const abs = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1), dir = Math.sign(e.deltaY);
             // One gesture = one step. A stream with <200 ms gaps is one gesture, including trackpad momentum; so is a late,
-            // still-decaying tail (<8 px, <1 s gap). A re-acceleration after decaying is a deliberate new flick.
+            // still-decaying tail (<8 px, <1 s gap).
             const gap = e.timeStamp - wheel.t, tail = gap < 1000 && abs < 8 && abs <= wheel.last;
-            if (dir !== wheel.dir || gap > 200 && !tail || wheel.low < wheel.peak * .5 && abs >= Math.max(10, wheel.low * 3)) wheel = { t: 0, dir, peak: 0, low: abs, last: abs, owned: false };
+            if (dir !== wheel.dir || gap > 200 && !tail) wheel = { t: 0, dir, last: abs, owned: false };
             wheel.t = e.timeStamp; wheel.last = abs;
-            if (abs >= wheel.peak) { wheel.peak = abs; wheel.low = abs; } else wheel.low = Math.min(wheel.low, abs);
             if (!wheel.owned) {
               if (!engaged() || !(stepping || canGo(dir))) return;
               wheel.owned = true; go(dir);
@@ -233,7 +236,7 @@ export default function SequenceHero({ lenis }: { lenis: MutableRefObject<Lenis 
       <svg className="sequence-leader" aria-hidden="true"><line pathLength="1"/></svg>
       <div className="sequence-marker" aria-hidden="true"><i/></div>
       <div className="sequence-fault" aria-hidden="true"><div className="sequence-fault-surface"><div className="sequence-fault-brand"><img src={withBase("/img/pradivya-logo-small.webp")} alt=""/><span>FAULT IDENTIFIED</span></div><strong/><span className="sequence-fault-detail"/></div></div>
-      <div className="sequence-foot"><span>ILLUSTRATIVE INSPECTION · <a href={withBase("/hero-credits.html")}>CREDITS</a></span><a href="#thesis">SCROLL TO DISCOVER ↓</a></div>
+      <div className="sequence-foot"><a href="#thesis">SCROLL TO DISCOVER ↓</a></div>
       <div className="sequence-loader" role="status" aria-label={loading ? 'Preparing inspection animation' : 'Inspection animation ready'}>
         <img className="sequence-loader-logo" src={withBase("/img/pradivya-logo-small.webp")} alt=""/>
         <span className="sequence-loader-label">INITIALIZING PHYSICAL AI</span>
