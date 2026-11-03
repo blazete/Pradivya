@@ -5,7 +5,8 @@ import type { Page } from '@playwright/test';
 // Hero resting frames: chapter rests 0/45/128/215/299 plus the fault-callout middles 75/164/240.
 const stops = [0, 45, 75, 128, 164, 215, 240, 299];
 const heroScrollTo = (page: Page, frame: number) => page.evaluate(frame => { const el = document.querySelector<HTMLElement>('.sequence-hero')!; window.scrollTo({ top: el.offsetTop + (el.offsetHeight - innerHeight) * frame / 299, behavior: 'instant' }); }, frame);
-const restsOn = async (page: Page, frame: number) => { const hero = page.locator('.sequence-hero'); await expect(hero).not.toHaveClass(/is-stepping/); await expect(hero).toHaveAttribute('data-frame', String(frame)); };
+// Frame first, then idle: a settle step starts ~200 ms after a jump, so 'not stepping' alone can pass before it begins.
+const restsOn = async (page: Page, frame: number) => { const hero = page.locator('.sequence-hero'); await expect(hero).toHaveAttribute('data-frame', String(frame)); await expect(hero).not.toHaveClass(/is-stepping/); await expect(hero).toHaveAttribute('data-frame', String(frame)); };
 const recordFrames = (page: Page) => page.evaluate(() => { const w = window as Window & { frames_?: number[] }, el = document.querySelector<HTMLElement>('.sequence-hero')!; w.frames_ = []; const tick = () => { w.frames_!.push(Number(el.dataset.frame)); requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
 const recordedFrames = (page: Page) => page.evaluate(() => (window as Window & { frames_?: number[] }).frames_!);
 const heroReady = async (page: Page) => { await expect(page.locator('.sequence-hero')).toHaveClass(/is-ready/); await page.waitForTimeout(300); await page.mouse.move(200, 400); };
