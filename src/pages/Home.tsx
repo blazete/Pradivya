@@ -33,13 +33,17 @@ export default function Home() {
     return () => document.removeEventListener('keydown', close);
   }, []);
   const navIndicator = useRef<HTMLSpanElement>(null);
+  const lenisRef = useRef<Lenis>();
   useEffect(() => {
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const lenis = new Lenis({ lerp: reducedMotion ? 1 : 0.09, smoothWheel: !reducedMotion, anchors: !reducedMotion });
+    const lenis = lenisRef.current = new Lenis({ lerp: reducedMotion ? 1 : 0.09, smoothWheel: !reducedMotion, anchors: !reducedMotion });
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
+    // Trigger positions are measured before the four non-preloaded font faces swap in.
+    let fontsPending = true;
+    void document.fonts.ready.then(() => { if (fontsPending) ScrollTrigger.refresh(); });
     const isReload = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'reload';
     const resetScroll = () => { lenis.scrollTo(0, { immediate: true, force: true }); window.scrollTo({top: 0, left: 0, behavior: 'instant'}); };
     if (isReload) { resetScroll(); window.addEventListener('pageshow', resetScroll); }
@@ -85,13 +89,13 @@ export default function Home() {
       });
     }, root);
     const resetFrame = isReload ? requestAnimationFrame(resetScroll) : 0;
-    return () => { cancelAnimationFrame(resetFrame); window.removeEventListener('pageshow', resetScroll); cleanups.forEach((cleanup) => cleanup()); ctx.revert(); gsap.ticker.remove(tick); lenis.destroy(); };
+    return () => { cancelAnimationFrame(resetFrame); window.removeEventListener('pageshow', resetScroll); cleanups.forEach((cleanup) => cleanup()); ctx.revert(); gsap.ticker.remove(tick); gsap.ticker.lagSmoothing(500, 33); fontsPending = false; lenis.destroy(); lenisRef.current = undefined; };
   }, []);
 
   return <div ref={root} className="physical-page">
     <header className={`ph-nav ${menuOpen ? 'menu-open' : ''}`}><a href="#top" aria-label="Pradivya home"><img src={withBase("/img/pradivya-logo-small.webp")} alt="Pradivya" width="88" height="55" /></a><nav id="landing-navigation" aria-label="Main navigation" onClick={() => setMenuOpen(false)}><span ref={navIndicator} className="ph-nav-indicator" aria-hidden="true"/><a href="#platform">Platform</a><a href="#open-source">Open source</a><a href="#industries">Industries</a><a href="#hub">The Hub</a></nav><a className="pill dark-pill" href={withBase("/contact#request")}>Book a demo <ArrowUpRight size={15}/></a><button ref={menuButton} className="mobile-menu" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="landing-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X/> : <Menu/>}</button></header>
 
-    <SequenceHero />
+    <SequenceHero lenis={lenisRef} />
     <AssociationMarquee />
 
     <SystemSection />
