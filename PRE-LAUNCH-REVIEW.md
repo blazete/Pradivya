@@ -69,7 +69,7 @@ Evidence:
 
 ## Before public release
 
-1. **Confirm reference reuse permissions.** `RERUN-SOURCE.md` documents website scene code extracted from rerun.io. `FOOTER-REFERENCE.md` documents code adapted from Sandcastle. The cloud backdrop came from Ghost. Public-use permission for these particular sources has not been established in this review. Obtain permission or replace those items with independently authored equivalents before public publication. Bencho's supplied component retains its notice separately.
+1. **Confirm reference reuse permissions.** `FOOTER-REFERENCE.md` documents code adapted from Sandcastle. The cloud backdrop came from Ghost. Public-use permission for these particular sources has not been established in this review. Obtain permission or replace those items with independently authored equivalents before public publication. Bencho's supplied component retains its notice separately.
 2. **Approve business content.** Market forecasts still carry the visible verification note; deployments, advisor roles, brand associations and legal-policy content need the company owner's approval. This technical review does not independently establish those claims or permissions.
 3. **Choose the exact subdomain and repository.** No DNS, GitHub repository settings or live site was changed. The build assumes a custom subdomain served from `/`.
 4. **Decide whether email drafts are sufficient.** They are usable on static hosting but require a configured email app and a final Send action. Automatic submissions need an approved form service or backend. The old exposed service key should be rotated by its owner.
