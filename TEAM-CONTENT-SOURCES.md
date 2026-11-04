@@ -23,7 +23,7 @@ Advisor inclusion comes from the supplied Pradivya Physical AI framework and the
   - 2026 contextual corroboration: https://ritz-innovationszentrum.com/2026/06/move-plus-accelerator-im-ritz/
   - ZF historical role: https://press.zf.com/press/en/media/media_33410.html
 - R. (Shyam) Shyamsunder: the company archive lists Mentor and former Managing Director – Investments, Temasek Holdings. Temasek Review 2006 lists R Shyamsunder as Managing Director, Investment. The visible card uses the former role; no new current employer is inferred. Portrait `public/team/r_shyamsunder.jpg` and LinkedIn URL are from the ZIP.
-  - 2026-11-04: role line set by the owner to "Former senior roles at Temasek Holdings (Investments) and JPMorgan Chase (Investment Banking), India and Singapore".
+  - 2026-11-04: the owner set the card text (bio) to "Former senior roles at Temasek Holdings (Investments) and JPMorgan Chase (Investment Banking), India and Singapore." and removed the role line.
   - Temasek Review: https://www.temasek.com.sg/content/dam/temasek-corporate/our-financials/investor-library/annual-review/en-tr-thumbnail-and-pdf/temasek-review-2006.pdf
   - Archive LinkedIn: https://www.linkedin.com/in/r-shyam-shyamsunder-a4b96843/
 
