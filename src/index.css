@@ -198,7 +198,6 @@ html {
 /* Parallax effects */
 .parallax-slow {
   transform: translateZ(0);
-  will-change: transform;
 }
 
 /* Hover effects */

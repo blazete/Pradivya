@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin, ChevronUp } from 'lucide-react';
+import { withBase } from '../lib/base';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -51,7 +52,7 @@ const Footer: React.FC = () => {
                 <div>
                   <div className="flex items-center space-x-3 mb-6">
                     <img
-                      src="/img/pradivya-logo-small.webp"
+                      src={withBase("/img/pradivya-logo-small.webp")}
                       width="80"
                       height="60"
                       alt="Pradivya Software"
@@ -143,7 +144,7 @@ const Footer: React.FC = () => {
                     {quickLinks.map((link) => (
                       <li key={link.name}>
                         <a
-                          href={link.href}
+                          href={withBase(link.href)}
                           className="text-gray-400 hover:text-white hover:translate-x-2 transition-all duration-300 block"
                         >
                           {link.name}

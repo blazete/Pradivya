@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { useInView } from '../hooks/useInView';
+import { withBase } from '../lib/base';
 
 const Achievements: React.FC = () => {
   const { ref: heroRef, isInView: heroInView } = useInView({ threshold: 0.1 });
@@ -12,7 +13,7 @@ const Achievements: React.FC = () => {
       name: 'NASDAQ Entrepreneurial Center',
       type: 'Accelerator Program',
       year: '2021',
-      image:'/img/nasdaq.png',
+      image:withBase('/img/nasdaq.png'),
       description: 'Selected (OUT OF 13) from INDIA for MILESTONE MAKER COHORT SPRING 2021 COHORT by Nasdaq Entrepreneurial Centre.',
       icon: Star
     },
@@ -20,7 +21,7 @@ const Achievements: React.FC = () => {
       name: 'MOVE+ Accelerator',
       type: 'Innovation Program',
       year: '2021',
-      image:'/img/move.png',
+      image:withBase('/img/move.png'),
       description: 'Part of prestigious move+ Accelerator - a joint initiative of ZF Group Zeppelin University and STADTWERK AM SEE',
       icon: Star
     },
@@ -28,7 +29,7 @@ const Achievements: React.FC = () => {
       name: 'Google App Scale',
       type: 'Accelerator Program',
       year: '2023',
-      image:'/img/google.png',
+      image:withBase('/img/google.png'),
       description: 'Selected by GOOGLE for our efforts in social impact , skilling and jobs',
       icon: Star
     },
@@ -36,7 +37,7 @@ const Achievements: React.FC = () => {
       name: 'ASEAN startup summit',
       type: 'Government Support',
       year: '2023',
-      image:'/img/asean.png',
+      image:withBase('/img/asean.png'),
       description: 'India- ASEAN startup summit 2023 in Kaula Lumpur, Malaysia as member of Department of science and technology, Government of India delegation. ',
       icon: Star
     },
@@ -44,7 +45,7 @@ const Achievements: React.FC = () => {
       name: 'Citi Social innovation lab',
       type: 'Selected for prestigious programs',
       year: '2023',
-      image:'/img/city.png',
+      image:withBase('/img/city.png'),
       description: 'Recognized and supported by Small Industries Development Bank of India for technology innovation.',
       icon: Star
     },
@@ -52,7 +53,7 @@ const Achievements: React.FC = () => {
       name: 'Arena2036',
       type: 'Research Collaboration',
       year: '2025',
-      image:'/img/arena1.png',
+      image:withBase('/img/arena1.png'),
       description: 'Selected in ARENA 2036 in Stuttgart(Germany) ',
       icon: Star
     }

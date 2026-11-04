@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { withBase } from '../lib/base';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -55,7 +56,7 @@ const Header: React.FC = () => {
               className="relative overflow-hidden rounded-lg p-1 transition-all duration-300 hover:bg-white/50 dark:hover:bg-gray-800/50"
             >
               <img
-                src="/img/pradivya-logo-small.webp"
+                src={withBase("/img/pradivya-logo-small.webp")}
                 width="70"
                 height="50"
                 alt="Pradivya Software"
@@ -89,7 +90,7 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-3">
             {/* Request Demo Button */}
             <a
-              href="/contact"
+              href={withBase("/contact")}
               className="hidden md:inline-flex btn-primary text-sm px-6 py-2.5 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Request Demo
@@ -149,7 +150,7 @@ const Header: React.FC = () => {
               ))}
               <div className="pt-4 mt-4 border-t border-gray-200/50 dark:border-gray-700/50">
                 <a
-                  href="/contact#request"
+                  href={withBase("/contact#request")}
                   className="block btn-primary text-center text-base py-3 transform hover:scale-105 transition-all duration-300"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

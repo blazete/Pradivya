@@ -2,6 +2,7 @@ import React from 'react';
 import { useInView } from '../hooks/useInView';
 import { Award, Target, Users, Star, Heart, Eye, Zap } from 'lucide-react';
 import Team from '../components/Team';
+import { withBase } from '../lib/base';
   interface TimelineEvent {
   date: string;
   title: string;
@@ -119,13 +120,13 @@ const About: React.FC = () => {
       name: 'ZF Group',
       type: 'Accelerator & Technology Partnership',
       description: 'Global automotive technology collaboration for innovative mobility solutions.',
-      logo: '/img/zf.jpg'
+      logo: withBase('/img/zf.jpg')
     },
     {
       name: 'ARENA2036',
       type: 'Research Collaboration',
       description: 'Advanced automotive research platform for future mobility concepts.',
-      logo: '/img/arena1.png'
+      logo: withBase('/img/arena1.png')
     }
   ];
 
